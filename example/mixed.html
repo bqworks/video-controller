@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Video Controller - Mixed</title>
+
+<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="../libs/video-js/video-js.min.css" media="screen"/>
+
+<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/jw-player/jwplayer.js"></script>
+<script type="text/javascript" src="../libs/video-js/video.js"></script>
+<script type="text/javascript" src="http://cdn.sublimevideo.net/js/7oi5bx6y.js"></script>
+<script type="text/javascript" src="../dist/jquery.videoController.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		jwplayer("video2").setup({
+	        file: "http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4",
+	        image: "http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg",
+	        width: 500,
+	        height: 350
+	    });
+
+		$('.video').videoController();
+
+		$('.video').on('videoPlay', function(event) {
+			$('.video').not('#' + event.video).videoController('pause');
+		});
+	});
+</script>
+
+</head>
+
+<body>
+	<iframe id="youtube-video" class="video" src="http://www.youtube.com/embed/oaDkph9yQBs?enablejsapi=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+
+	<iframe id="vimeo-video" class="video" src="//player.vimeo.com/video/43401199?api=1&player_id=vimeo-video" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+	<video id="html5-video" class="video" controls="controls" preload="none" width="500" height="350"
+		   poster="http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg">
+		<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4" type='video/mp4'/>
+		<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.ogg" type='video/ogg'/>
+	</video>
+				
+	<div id="videojs-video" class="video" data-videojs-id="video1">
+		<video id="video1" class="video-js vjs-default-skin" controls="controls" preload="none" width="500" height="350"
+			   poster="http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg" data-setup="{}">
+			<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4" type='video/mp4'/>
+		</video>
+	</div>
+
+	<video id="sublime-video" class="sublime video" controls="controls" preload="none" width="500" height="350"
+		   poster="http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg">
+		<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4" type='video/mp4'/>
+		<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.ogg" type='video/ogg'/>
+	</video>
+
+	<div id="jwplayer-video" class="video" data-jwplayer-id="video2">
+		<div id="video2">Loading the video...</div>
+	</div>
+</body>
+</html>

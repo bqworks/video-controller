@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Video Controller - Video.js</title>
+
+<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+<link rel="stylesheet" type="text/css" href="../libs/video-js/video-js.min.css" media="screen"/>
+
+<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/video-js/video.js"></script>
+<script type="text/javascript" src="../dist/jquery.videoController.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#video-container').videoController({
+			videoStart: function() { displayEvent('start'); },
+			videoPlay: function() { displayEvent('play'); },
+			videoPause: function() { displayEvent('pause'); },
+			videoEnded: function() { displayEvent('ended'); }
+		});
+	});
+
+	function playVideo() {
+		$('#video-container').videoController('play');
+	}
+
+	function pauseVideo() {
+		$('#video-container').videoController('pause');
+	}
+
+	function stopVideo() {
+		$('#video-container').videoController('stop');
+	}
+
+	function displayEvent(eventType) {
+		var textarea  = $('.events');
+
+		textarea.val(textarea.val() + '\n' + eventType);
+		textarea.scrollTop(textarea[0].scrollHeight);
+	}
+</script>
+
+</head>
+
+<body>
+	<!-- 
+		Video.js changes the structure of the video element
+		and this creates some problems to the plugin.
+		
+		As a work-around, we create a container element, 
+		specify the ID of the video in the 'data-videojs-id'
+		and target the container element when we instantiate the plugin.
+	-->
+	<div id="video-container" data-videojs-id="my-video">
+		<video id="my-video" class="video-js vjs-default-skin" controls="controls" preload="none" width="500" height="350"
+			   poster="http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg" data-setup="{}">
+			<source src="http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4" type='video/mp4'/>
+		</video>
+	</div>
+
+	<div class="controls">
+	    <a href="#" onclick="playVideo();">Play</a>
+	    <a href="#" onclick="pauseVideo();">Pause</a>
+	    <a href="#" onclick="stopVideo();">Stop</a>
+	</div>
+
+	<textarea class="events" cols="50" rows="10">Events:</textarea>
+</body>
+</html>

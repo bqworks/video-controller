@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Video Controller - YouTube</title>
+
+<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+
+<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../dist/jquery.videoController.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#my-video').videoController({
+			videoReady: function() { displayEvent('ready'); },
+			videoStart: function() { displayEvent('start'); },
+			videoPlay: function() { displayEvent('play'); },
+			videoPause: function() { displayEvent('pause'); },
+			videoEnded: function() { displayEvent('ended'); }
+		});
+	});
+
+	function playVideo() {
+		$('#my-video').videoController('play');
+	}
+
+	function pauseVideo() {
+		$('#my-video').videoController('pause');
+	}
+
+	function stopVideo() {
+		$('#my-video').videoController('stop');
+	}
+
+	function displayEvent(eventType) {
+		var textarea  = $('.events');
+
+		textarea.val(textarea.val() + '\n' + eventType);
+		textarea.scrollTop(textarea[0].scrollHeight);
+	}
+</script>
+
+</head>
+
+<body>
+	<iframe id="my-video" src="http://www.youtube.com/embed/oaDkph9yQBs?enablejsapi=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+				
+	<div class="controls">
+	    <a href="#" onclick="playVideo();">Play</a>
+	    <a href="#" onclick="pauseVideo();">Pause</a>
+	    <a href="#" onclick="stopVideo();">Stop</a>
+	</div>
+
+	<textarea class="events" cols="50" rows="10">Events:</textarea>
+</body>
+</html>

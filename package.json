@@ -1,0 +1,13 @@
+{
+  "name": "video-controller",
+  "description" : "Universal video controller for YouTube, Vimeo, HTML5, Video.js and SublimeVideo.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/bqworks/video-controller",
+  "author": "bqworks",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-uglify": "~0.2.2"
+  }
+}
