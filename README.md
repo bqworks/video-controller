@@ -8,14 +8,14 @@ At the moment, support was added for YouTube, Vimeo, HTML5, Video.js, Sublime Vi
 
 ### Load the scripts: ###
 
-```
+```html
 <script type="text/javascript" src="/path/to/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="/path/to/jquery.videoController.min.js"></script>
 ```
 
 ### Load the video(s): ###
 
-```
+```html
 <body>
 	<iframe id="my-video" src="http://www.youtube.com/embed/oaDkph9yQBs?enablejsapi=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
 </body>
@@ -23,7 +23,7 @@ At the moment, support was added for YouTube, Vimeo, HTML5, Video.js, Sublime Vi
 
 ### Instantiate the plugin: ###
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
@@ -46,7 +46,7 @@ The available public methods are:
 
 Example:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
@@ -90,7 +90,7 @@ The available events are:
 
 Example 1:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController({
@@ -106,7 +106,7 @@ Example 1:
 
 Example 2:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
