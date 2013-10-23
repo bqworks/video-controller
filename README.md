@@ -8,14 +8,14 @@ At the moment, support was added for YouTube, Vimeo, HTML5, Video.js, Sublime Vi
 
 ### Load the scripts: ###
 
-```
+```html
 <script type="text/javascript" src="/path/to/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="/path/to/jquery.videoController.min.js"></script>
 ```
 
 ### Load the video(s): ###
 
-```
+```html
 <body>
 	<iframe id="my-video" src="http://www.youtube.com/embed/oaDkph9yQBs?enablejsapi=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
 </body>
@@ -23,7 +23,7 @@ At the moment, support was added for YouTube, Vimeo, HTML5, Video.js, Sublime Vi
 
 ### Instantiate the plugin: ###
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
@@ -46,7 +46,7 @@ The available public methods are:
 
 Example:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
@@ -90,7 +90,7 @@ The available events are:
 
 Example 1:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController({
@@ -106,7 +106,7 @@ Example 1:
 
 Example 2:
 
-```
+```html
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#my-video').videoController();
@@ -122,9 +122,139 @@ Example 2:
 </script>
 ```
 
-## Examples ##
+## Preparing the videos ##
 
-More examples can be found in the 'examples' folder.
+### YouTube ###
+
+The iframe embeds need to have the `enablejsapi=1` parameter appended to the URL of the video.
+
+```html
+<iframe id="my-video" src="http://www.youtube.com/embed/msIjWthwWwI?enablejsapi=1" width="500" height="350" frameborder="0" allowfullscreen></iframe>
+```
+
+### Vimeo ###
+
+The iframe embeds need to have the `api=1` parameter appended to the URL of the video.
+
+```html
+<iframe id="my-video" src="http://player.vimeo.com/video/43401199?api=1" width="500" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+```
+
+### HTML5 ###
+
+Simple HTML5 videos don't need any preparation.
+
+```html
+<video id="my-video" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
+	<source src="path/to/video.mp4" type="video/mp4"/>
+	<source src="path/to/video.ogv" type="video/ogg"/>
+</video>
+```
+
+### Video.js ###
+
+Videos that use the Video.js library have their HTML markup modified. This creates some problems if we want to instantiate the plugin on the `video` element. The solution is to create a container element and add the video inside the container. To this container we'll add the `data-videojs-id` attribute in order to indicate the `id` attribute of the video element.
+
+```html
+<div id="video-container" data-videojs-id="my-video">
+	<video id="my-video" class="video-js vjs-default-skin" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none" 
+			data-setup="{}">
+		<source src="path/to/video.mp4" type="video/mp4"/>
+		<source src="path/to/video.ogv" type="video/ogg"/>
+	</video>
+</div>
+```
+
+```html
+$(document).ready(function() {
+	$('#video-container').videoController();
+});
+```
+
+If you prefer to not use a container, you will need to instantiate the plugin after the video was set up.
+
+```html
+<video id="my-video" class="video-js vjs-default-skin" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none" 
+		data-setup="{}">
+	<source src="path/to/video.mp4" type="video/mp4"/>
+	<source src="path/to/video.ogv" type="video/ogg"/>
+</video>
+```
+
+```html
+$(document).ready(function() {
+	videojs('my-video').ready(function() {
+		$('#video-container').videoController();
+	});
+});
+```
+
+Please note that, in order to use Video.js, you need to load the Video.js JavaScript and CSS files in your page. More information about how to use Video.js, in general, can be found on the [official Video.js page](http://www.videojs.com/). 
+
+### SublimeVideo ###
+
+No preparation is required, other than setting up the videos as the Sublime Video documentation indicates.
+
+```html
+<video id="my-video" class="sublime" poster="path/to/poster.jpg" width="500" height="350" controls="controls" preload="none">
+	<source src="path/to/video.mp4" type="video/mp4"/>
+	<source src="path/to/video.ogv" type="video/ogg"/>
+</video>
+```
+
+Please note that, in order to use SublimeVideo, you will also need to load a script in your page which you need to download from the SublimeVideo page. More information about how to use SublimeVideo, in general, can be found on the [official SublimeVideo page](http://www.sublimevideo.net/).
+
+### JW Player ###
+
+Just like Video.js, JW Player videos modify the HTML markup and we need to use a container element to facilitate the integration with the Video Controller plugin. The container will have the `data-jwplayer-id` attribute which will indicate the `id` attribute of the video element.
+
+```html
+<div id="video-container" data-jwplayer-id="my-video">
+	<div id="my-video">Loading the video...</div>
+</div>
+```
+
+```html
+$(document).ready(function() {
+    jwplayer("my-video").setup({
+        file: "http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4",
+        image: "http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg",
+        width: 500,
+        height: 350
+    });
+
+
+	$('#video-container').videoController();
+});
+```
+
+It's also possible to not use a container element, but in that case the plugin needs to be instantiated after the video was set up.
+
+```html
+<div id="my-video">Loading the video...</div>
+```
+
+```html
+var video;
+
+$(document).ready(function() {
+    jwplayer("my-video").setup({
+        file: "http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4",
+        image: "http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg",
+        width: 500,
+        height: 350,
+        events: {
+        	onReady: function() {
+        		// if the flash player is used, the set ID will be attributed to an object element. 
+        		// However, we can't instantiate the plugin on an object element, 
+        		// so we instantiate it on the object's wrapper instead
+        		video = $('#my-video').is('object') ? $('#my-video').parent() : $('#my-video');
+        		video.videoController();
+        	}
+        }
+    });
+});
+```
 
 ## License ##
 
