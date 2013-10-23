@@ -2,7 +2,7 @@
     "name": "videoController",
     "title": "Video Controller",
     "description": "Offers an interface for controlling some of the popular video players and providers, so that you don't have to deal with the particularities of each video API.",
-    "version": "v1.1.1",
+    "version": "v1.1.5",
     "keywords": [
         "video",
         "api",
