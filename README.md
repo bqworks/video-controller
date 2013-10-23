@@ -165,7 +165,7 @@ Videos that use the Video.js library have their HTML markup modified. This creat
 </div>
 ```
 
-```html
+```javascript
 $(document).ready(function() {
 	$('#video-container').videoController();
 });
@@ -181,7 +181,7 @@ If you prefer to not use a container, you will need to instantiate the plugin af
 </video>
 ```
 
-```html
+```javascript
 $(document).ready(function() {
 	videojs('my-video').ready(function() {
 		$('#video-container').videoController();
@@ -214,7 +214,7 @@ Just like Video.js, JW Player videos modify the HTML markup and we need to use a
 </div>
 ```
 
-```html
+```javascript
 $(document).ready(function() {
     jwplayer("my-video").setup({
         file: "http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4",
@@ -234,7 +234,7 @@ It's also possible to not use a container element, but in that case the plugin n
 <div id="my-video">Loading the video...</div>
 ```
 
-```html
+```javascript
 var video;
 
 $(document).ready(function() {
