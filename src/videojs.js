@@ -10,7 +10,7 @@ VideoJSVideo.prototype.constructor = VideoJSVideo;
 $.VideoController.addPlayer('VideoJSVideo', VideoJSVideo);
 
 VideoJSVideo.isType = function(video) {
-	if (typeof video.attr('data-videojs-id') !== 'undefined' && typeof videojs !== 'undefined')
+	if ((typeof video.attr('data-videojs-id') !== 'undefined' || video.hasClass('video-js')) && typeof videojs !== 'undefined')
 		return true;
 
 	return false;
@@ -18,8 +18,8 @@ VideoJSVideo.isType = function(video) {
 
 VideoJSVideo.prototype._init = function() {
 	var that = this,
-		videoID = this.$video.attr('data-videojs-id');
-
+		videoID = this.$video.hasClass('video-js') ? this.$video.attr('id') : this.$video.attr('data-videojs-id');
+	
 	this.player = videojs(videoID);
 
 	this.player.ready(function() {

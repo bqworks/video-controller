@@ -10,7 +10,8 @@ JWPlayerVideo.prototype.constructor = JWPlayerVideo;
 $.VideoController.addPlayer('JWPlayerVideo', JWPlayerVideo);
 
 JWPlayerVideo.isType = function(video) {
-	if (typeof video.attr('data-jwplayer-id') !== 'undefined' && typeof jwplayer !== 'undefined')
+	if ((typeof video.attr('data-jwplayer-id') !== 'undefined' || video.hasClass('jwplayer') || video.find("object[data*='jwplayer']").length !== 0) &&
+		typeof jwplayer !== 'undefined')
 		return true;
 
 	return false;
@@ -18,7 +19,14 @@ JWPlayerVideo.isType = function(video) {
 
 JWPlayerVideo.prototype._init = function() {
 	var that = this,
+		videoID;
+
+	if (this.$video.hasClass('jwplayer'))
+		videoID = this.$video.attr('id');
+	else if (typeof video.attr('data-jwplayer-id') !== 'undefined')
 		videoID = this.$video.attr('data-jwplayer-id');
+	else if (this.$video.find("object[data*='jwplayer']").length !== 0)
+		videoID = this.$video.find('object').attr('id');
 
 	// get reference to the player
 	this.player = jwplayer(videoID);

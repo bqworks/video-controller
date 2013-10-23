@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Video Controller - JW Player</title>
+
+<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+
+<script type="text/javascript" src="../libs/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="../libs/jw-player/jwplayer.js"></script>
+<script type="text/javascript" src="../dist/jquery.videoController.min.js"></script>
+
+<script type="text/javascript">
+	var video;
+
+	$(document).ready(function() {
+	    jwplayer("my-video").setup({
+	        file: "http://bqworks.com/products/assets/videos/bbb/bbb-trailer.mp4",
+	        image: "http://bqworks.com/products/assets/videos/bbb/bbb-poster.jpg",
+	        width: 500,
+	        height: 350,
+	        events: {
+	        	onReady: function() {
+	        		// if the flash player is used, the set ID will be attributed to an object element. 
+	        		// However, we can't instantiate the plugin on an object element, 
+	        		// so we instantiate it on the object's wrapper instead
+	        		video = $('#my-video').is('object') ? $('#my-video').parent() : $('#my-video');
+	        		video.videoController({
+						videoStart: function() { displayEvent('start'); },
+						videoPlay: function() { displayEvent('play'); },
+						videoPause: function() { displayEvent('pause'); },
+						videoEnded: function() { displayEvent('ended'); }
+					});
+	        	}
+	        }
+	    });
+	});
+
+	function playVideo() {
+		video.videoController('play');
+	}
+
+	function pauseVideo() {
+		video.videoController('pause');
+	}
+
+	function stopVideo() {
+		video.videoController('stop');
+	}
+
+	function displayEvent(eventType) {
+		var textarea  = $('.events');
+
+		textarea.val(textarea.val() + '\n' + eventType);
+		textarea.scrollTop(textarea[0].scrollHeight);
+	}
+</script>
+
+</head>
+
+<body>
+	<div id="my-video">Loading the video...</div>
+
+	<div class="controls">
+	    <a href="#" onclick="playVideo();">Play</a>
+	    <a href="#" onclick="pauseVideo();">Pause</a>
+	    <a href="#" onclick="stopVideo();">Stop</a>
+	</div>
+
+	<textarea class="events" cols="50" rows="10">Events:</textarea>
+</body>
+</html>
