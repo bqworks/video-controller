@@ -647,7 +647,7 @@ JWPlayerVideo.prototype._init = function() {
 
 	if (this.$video.hasClass('jwplayer'))
 		videoID = this.$video.attr('id');
-	else if (typeof video.attr('data-jwplayer-id') !== 'undefined')
+	else if (typeof this.$video.attr('data-jwplayer-id') !== 'undefined')
 		videoID = this.$video.attr('data-jwplayer-id');
 	else if (this.$video.find("object[data*='jwplayer']").length !== 0)
 		videoID = this.$video.find('object').attr('id');
