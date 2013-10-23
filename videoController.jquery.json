@@ -1,0 +1,38 @@
+{
+    "name": "videoController",
+    "title": "Video Controller",
+    "description": "Offers an interface for controlling some of the popular video players and providers, so that you don't have to deal with the particularities of each video API.",
+    "version": "1.1.0",
+    "keywords": [
+        "video",
+        "api",
+        "youtube",
+        "vimeo",
+        "video.js",
+        "sublimevideo",
+        "jwplayer"
+    ],
+    "author": {
+        "name": "bqworks",
+        "url": "https://github.com/bqworks"
+    },
+    "maintainers": [
+        {
+            "name": "David Ghiurau",
+            "email": "david.ghiurau@gmail.com",
+            "url": "https://github.com/davidghi"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://opensource.org/licenses/MIT"
+        }
+    ],
+    "homepage": "https://github.com/bqworks/video-controller",
+    "docs": "https://github.com/bqworks/video-controller",
+    "bugs": "https://github.com/bqworks/video-controller/issues",
+    "dependencies": {
+        "jquery": ">=1.7"
+    }
+}
