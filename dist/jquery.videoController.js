@@ -47,34 +47,16 @@ VideoController.prototype = {
 			return;
 
 		// add event listeners
-		this.player.on('ready', function() {
-			that.trigger({type: 'videoReady', video: videoID});
-			if ($.isFunction(that.settings.videoReady))
-				that.settings.videoReady.call(that, {type: 'videoReady', video: videoID});
-		});
+		var events = ['ready', 'start', 'play', 'pause', 'ended'];
+		
+		$.each(events, function(index, element) {
+			var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
 
-		this.player.on('start', function() {
-			that.trigger({type: 'videoStart', video: videoID});
-			if ($.isFunction(that.settings.videoStart))
-				that.settings.videoStart.call(that, {type: 'videoStart', video: videoID});
-		});
-
-		this.player.on('play', function() {
-			that.trigger({type: 'videoPlay', video: videoID});
-			if ($.isFunction(that.settings.videoPlay))
-				that.settings.videoPlay.call(that, {type: 'videoPlay', video: videoID});
-		});
-
-		this.player.on('pause', function() {
-			that.trigger({type: 'videoPause', video: videoID});
-			if ($.isFunction(that.settings.videoPause))
-				that.settings.videoPause.call(that, {type: 'videoPause', video: videoID});
-		});
-
-		this.player.on('ended', function() {
-			that.trigger({type: 'videoEnded', video: videoID});
-			if ($.isFunction(that.settings.videoEnded))
-				that.settings.videoEnded.call(that, {type: 'videoEnded', video: videoID});
+			that.player.on(element, function() {
+				that.trigger({type: event, video: videoID});
+				if ($.isFunction(that.settings[event]))
+					that.settings[event].call(that, {type: event, video: videoID});
+			});
 		});
 	},
 	
