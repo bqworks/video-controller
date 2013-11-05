@@ -29,35 +29,36 @@ VideoController.prototype = {
 	_init: function() {
 		this.settings = $.extend({}, this.defaults, this.options);
 
-		var players = $.VideoController.players,
-			that = this,
-			videoID = this.$video.attr('id');
+		var that = this,
+			players = $.VideoController.players,
+			videoID = this.$video.attr('id'),
+			videoType = '';
 
 		// loop through the available video players
-		// and check if the targeted video element is supported by one of the players
+		// and check if the targeted video element is supported by one of the players.
+		// if a compatible type is found, store the video type
 		for (var name in players) {
 			if (typeof players[name] !== 'undefined' && players[name].isType(this.$video)) {
-				this.player = new players[name](this.$video);
+				videoType = name;
 				break;
 			}
 		}
 
-		// return if the player could not be instantiated
-		if (this.player === null)
-			return;
+		// instantiate the video and add the event listeners
+		if (videoType !== '')
+			this.player = new players[videoType](this.$video, function() {
+				var events = ['ready', 'start', 'play', 'pause', 'ended'];
 
-		// add event listeners
-		var events = ['ready', 'start', 'play', 'pause', 'ended'];
-		
-		$.each(events, function(index, element) {
-			var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
+				$.each(events, function(index, element) {
+					var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
 
-			that.player.on(element, function() {
-				that.trigger({type: event, video: videoID});
-				if ($.isFunction(that.settings[event]))
-					that.settings[event].call(that, {type: event, video: videoID});
+					that.player.on(element, function() {
+						that.trigger({type: event, video: videoID});
+						if ($.isFunction(that.settings[event]))
+							that.settings[event].call(that, {type: event, video: videoID});
+					});
+				});
 			});
-		});
 	},
 	
 	play: function() {
@@ -206,8 +207,37 @@ Video.prototype = {
 /*
 	YouTube video
 */
-var YoutubeVideo = function(video) {
-	Video.call(this, video);
+var YoutubeVideoHelper = {
+	youtubeAPIAdded: false,
+	youtubeVideos: []
+};
+
+var YoutubeVideo = function(video, ready) {
+	var that = this,
+		youtubeAPILoaded = window.YT && window.YT.Player;
+
+	if (typeof youtubeAPILoaded !== 'undefined') {
+		Video.call(that, video);
+		ready();
+	} else {
+		YoutubeVideoHelper.youtubeVideos.push({'video': video, 'obj': this});
+		
+		if (YoutubeVideoHelper.youtubeAPIAdded === false) {
+			YoutubeVideoHelper.youtubeAPIAdded = true;
+
+			var tag = document.createElement('script');
+			tag.src = "http://www.youtube.com/player_api";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+			window.onYouTubePlayerAPIReady = function() {
+				$.each(YoutubeVideoHelper.youtubeVideos, function(index, element) {
+					Video.call(element.obj, element.video);
+					ready();
+				});
+			};
+		}
+	}
 };
 
 YoutubeVideo.prototype = new Video();
@@ -226,21 +256,7 @@ YoutubeVideo.isType = function(video) {
 };
 
 YoutubeVideo.prototype._init = function() {
-	var that = this,
-		youtubeAPILoaded = window.YT && window.YT.Player;
-
-	if (typeof youtubeAPILoaded !== 'undefined') {
-		this._setup();
-	} else {
-		var tag = document.createElement('script');
-		tag.src = "http://www.youtube.com/player_api";
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-		
-		window.onYouTubePlayerAPIReady = function() {
-			that._setup();
-		};
-	}
+	this._setup();
 };
 	
 YoutubeVideo.prototype._setup = function() {

@@ -20,35 +20,36 @@ VideoController.prototype = {
 	_init: function() {
 		this.settings = $.extend({}, this.defaults, this.options);
 
-		var players = $.VideoController.players,
-			that = this,
-			videoID = this.$video.attr('id');
+		var that = this,
+			players = $.VideoController.players,
+			videoID = this.$video.attr('id'),
+			videoType = '';
 
 		// loop through the available video players
-		// and check if the targeted video element is supported by one of the players
+		// and check if the targeted video element is supported by one of the players.
+		// if a compatible type is found, store the video type
 		for (var name in players) {
 			if (typeof players[name] !== 'undefined' && players[name].isType(this.$video)) {
-				this.player = new players[name](this.$video);
+				videoType = name;
 				break;
 			}
 		}
 
-		// return if the player could not be instantiated
-		if (this.player === null)
-			return;
+		// instantiate the video and add the event listeners
+		if (videoType !== '')
+			this.player = new players[videoType](this.$video, function() {
+				var events = ['ready', 'start', 'play', 'pause', 'ended'];
 
-		// add event listeners
-		var events = ['ready', 'start', 'play', 'pause', 'ended'];
-		
-		$.each(events, function(index, element) {
-			var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
+				$.each(events, function(index, element) {
+					var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
 
-			that.player.on(element, function() {
-				that.trigger({type: event, video: videoID});
-				if ($.isFunction(that.settings[event]))
-					that.settings[event].call(that, {type: event, video: videoID});
+					that.player.on(element, function() {
+						that.trigger({type: event, video: videoID});
+						if ($.isFunction(that.settings[event]))
+							that.settings[event].call(that, {type: event, video: videoID});
+					});
+				});
 			});
-		});
 	},
 	
 	play: function() {
