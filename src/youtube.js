@@ -6,15 +6,14 @@ var YoutubeVideoHelper = {
 	youtubeVideos: []
 };
 
-var YoutubeVideo = function(video, ready) {
-	var that = this,
-		youtubeAPILoaded = window.YT && window.YT.Player;
+var YoutubeVideo = function(video) {
+	this.init = false;
+	var youtubeAPILoaded = window.YT && window.YT.Player;
 
 	if (typeof youtubeAPILoaded !== 'undefined') {
-		Video.call(that, video);
-		ready();
+		Video.call(this, video);
 	} else {
-		YoutubeVideoHelper.youtubeVideos.push({'video': video, 'obj': this});
+		YoutubeVideoHelper.youtubeVideos.push({'video': video, 'scope': this});
 		
 		if (YoutubeVideoHelper.youtubeAPIAdded === false) {
 			YoutubeVideoHelper.youtubeAPIAdded = true;
@@ -26,8 +25,7 @@ var YoutubeVideo = function(video, ready) {
 
 			window.onYouTubePlayerAPIReady = function() {
 				$.each(YoutubeVideoHelper.youtubeVideos, function(index, element) {
-					Video.call(element.obj, element.video);
-					ready();
+					Video.call(element.scope, element.video);
 				});
 			};
 		}
@@ -50,6 +48,7 @@ YoutubeVideo.isType = function(video) {
 };
 
 YoutubeVideo.prototype._init = function() {
+	this.init = true;
 	this._setup();
 };
 	
@@ -60,8 +59,8 @@ YoutubeVideo.prototype._setup = function() {
 	this.player = new YT.Player(this.$video[0], {
 		events: {
 			'onReady': function() {
-				that.ready = true;
 				that.trigger({type: 'ready'});
+				that.ready = true;
 			},
 			
 			'onStateChange': function(event) {
@@ -113,4 +112,19 @@ YoutubeVideo.prototype.stop = function() {
 YoutubeVideo.prototype.replay = function() {
 	this.player.seekTo(1);
 	this.player.playVideo();
+};
+
+YoutubeVideo.prototype.on = function(type, callback) {
+	var that = this;
+
+	if (this.init === true) {
+		Video.prototype.on.call(this, type, callback);
+	} else {
+		var timer = setInterval(function() {
+			if (that.init === true) {
+				clearInterval(timer);
+				Video.prototype.on.call(that, type, callback);
+			}
+		}, 100);
+	}
 };

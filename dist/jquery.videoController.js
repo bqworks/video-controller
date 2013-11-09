@@ -31,34 +31,34 @@ VideoController.prototype = {
 
 		var that = this,
 			players = $.VideoController.players,
-			videoID = this.$video.attr('id'),
-			videoType = '';
+			videoID = this.$video.attr('id');
 
 		// loop through the available video players
 		// and check if the targeted video element is supported by one of the players.
 		// if a compatible type is found, store the video type
 		for (var name in players) {
 			if (typeof players[name] !== 'undefined' && players[name].isType(this.$video)) {
-				videoType = name;
+				this.player = new players[name](this.$video);
 				break;
 			}
 		}
 
-		// instantiate the video and add the event listeners
-		if (videoType !== '')
-			this.player = new players[videoType](this.$video, function() {
-				var events = ['ready', 'start', 'play', 'pause', 'ended'];
+		// return if the player could not be instantiated
+		if (this.player === null)
+			return;
 
-				$.each(events, function(index, element) {
-					var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
+		// add event listeners
+		var events = ['ready', 'start', 'play', 'pause', 'ended'];
+		
+		$.each(events, function(index, element) {
+			var event = 'video' + element.charAt(0).toUpperCase() + element.slice(1);
 
-					that.player.on(element, function() {
-						that.trigger({type: event, video: videoID});
-						if ($.isFunction(that.settings[event]))
-							that.settings[event].call(that, {type: event, video: videoID});
-					});
-				});
+			that.player.on(element, function() {
+				that.trigger({type: event, video: videoID});
+				if ($.isFunction(that.settings[event]))
+					that.settings[event].call(that, {type: event, video: videoID});
 			});
+		});
 	},
 	
 	play: function() {
@@ -212,15 +212,14 @@ var YoutubeVideoHelper = {
 	youtubeVideos: []
 };
 
-var YoutubeVideo = function(video, ready) {
-	var that = this,
-		youtubeAPILoaded = window.YT && window.YT.Player;
+var YoutubeVideo = function(video) {
+	this.init = false;
+	var youtubeAPILoaded = window.YT && window.YT.Player;
 
 	if (typeof youtubeAPILoaded !== 'undefined') {
-		Video.call(that, video);
-		ready();
+		Video.call(this, video);
 	} else {
-		YoutubeVideoHelper.youtubeVideos.push({'video': video, 'obj': this});
+		YoutubeVideoHelper.youtubeVideos.push({'video': video, 'scope': this});
 		
 		if (YoutubeVideoHelper.youtubeAPIAdded === false) {
 			YoutubeVideoHelper.youtubeAPIAdded = true;
@@ -232,8 +231,7 @@ var YoutubeVideo = function(video, ready) {
 
 			window.onYouTubePlayerAPIReady = function() {
 				$.each(YoutubeVideoHelper.youtubeVideos, function(index, element) {
-					Video.call(element.obj, element.video);
-					ready();
+					Video.call(element.scope, element.video);
 				});
 			};
 		}
@@ -256,6 +254,7 @@ YoutubeVideo.isType = function(video) {
 };
 
 YoutubeVideo.prototype._init = function() {
+	this.init = true;
 	this._setup();
 };
 	
@@ -266,8 +265,8 @@ YoutubeVideo.prototype._setup = function() {
 	this.player = new YT.Player(this.$video[0], {
 		events: {
 			'onReady': function() {
-				that.ready = true;
 				that.trigger({type: 'ready'});
+				that.ready = true;
 			},
 			
 			'onStateChange': function(event) {
@@ -321,11 +320,56 @@ YoutubeVideo.prototype.replay = function() {
 	this.player.playVideo();
 };
 
+YoutubeVideo.prototype.on = function(type, callback) {
+	var that = this;
+
+	if (this.init === true) {
+		Video.prototype.on.call(this, type, callback);
+	} else {
+		var timer = setInterval(function() {
+			if (that.init === true) {
+				clearInterval(timer);
+				Video.prototype.on.call(that, type, callback);
+			}
+		}, 100);
+	}
+};
+
 /*
 	Vimeo video
 */
+var VimeoVideoHelper = {
+	vimeoAPIAdded: false,
+	vimeoVideos: []
+};
+
 var VimeoVideo = function(video) {
-	Video.call(this, video);
+	this.init = false;
+
+	if (typeof window.Froogaloop !== 'undefined') {
+		Video.call(this, video);
+	} else {
+		VimeoVideoHelper.vimeoVideos.push({'video': video, 'scope': this});
+
+		if (VimeoVideoHelper.vimeoAPIAdded === false) {
+			VimeoVideoHelper.vimeoAPIAdded = true;
+
+			var tag = document.createElement('script');
+			tag.src = "http://a.vimeocdn.com/js/froogaloop2.min.js";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		
+			var checkVimeoAPITimer = setInterval(function() {
+				if (typeof window.Froogaloop !== 'undefined') {
+					clearInterval(checkVimeoAPITimer);
+					
+					$.each(VimeoVideoHelper.vimeoVideos, function(index, element) {
+						Video.call(element.scope, element.video);
+					});
+				}
+			}, 100);
+		}
+	}
 };
 
 VimeoVideo.prototype = new Video();
@@ -344,23 +388,8 @@ VimeoVideo.isType = function(video) {
 };
 
 VimeoVideo.prototype._init = function() {
-	var that = this;
-
-	if (typeof window.Froogaloop !== 'undefined') {
-		this._setup();
-	} else {
-		var tag = document.createElement('script');
-		tag.src = "http://a.vimeocdn.com/js/froogaloop2.min.js";
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-		
-		var checkVimeoAPITimer = setInterval(function() {
-			if (typeof window.Froogaloop !== 'undefined') {
-				clearInterval(checkVimeoAPITimer);
-				that._setup();
-			}
-		}, 100);
-	}
+	this.init = true;
+	this._setup();
 };
 
 VimeoVideo.prototype._setup = function() {
@@ -412,6 +441,21 @@ VimeoVideo.prototype.stop = function() {
 VimeoVideo.prototype.replay = function() {
 	this.player.api('seekTo', 0);
 	this.player.api('play');
+};
+
+VimeoVideo.prototype.on = function(type, callback) {
+	var that = this;
+
+	if (this.init === true) {
+		Video.prototype.on.call(this, type, callback);
+	} else {
+		var timer = setInterval(function() {
+			if (that.init === true) {
+				clearInterval(timer);
+				Video.prototype.on.call(that, type, callback);
+			}
+		}, 100);
+	}
 };
 
 /*

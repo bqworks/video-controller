@@ -1,8 +1,38 @@
 /*
 	Vimeo video
 */
+var VimeoVideoHelper = {
+	vimeoAPIAdded: false,
+	vimeoVideos: []
+};
+
 var VimeoVideo = function(video) {
-	Video.call(this, video);
+	this.init = false;
+
+	if (typeof window.Froogaloop !== 'undefined') {
+		Video.call(this, video);
+	} else {
+		VimeoVideoHelper.vimeoVideos.push({'video': video, 'scope': this});
+
+		if (VimeoVideoHelper.vimeoAPIAdded === false) {
+			VimeoVideoHelper.vimeoAPIAdded = true;
+
+			var tag = document.createElement('script');
+			tag.src = "http://a.vimeocdn.com/js/froogaloop2.min.js";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		
+			var checkVimeoAPITimer = setInterval(function() {
+				if (typeof window.Froogaloop !== 'undefined') {
+					clearInterval(checkVimeoAPITimer);
+					
+					$.each(VimeoVideoHelper.vimeoVideos, function(index, element) {
+						Video.call(element.scope, element.video);
+					});
+				}
+			}, 100);
+		}
+	}
 };
 
 VimeoVideo.prototype = new Video();
@@ -21,23 +51,8 @@ VimeoVideo.isType = function(video) {
 };
 
 VimeoVideo.prototype._init = function() {
-	var that = this;
-
-	if (typeof window.Froogaloop !== 'undefined') {
-		this._setup();
-	} else {
-		var tag = document.createElement('script');
-		tag.src = "http://a.vimeocdn.com/js/froogaloop2.min.js";
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-		
-		var checkVimeoAPITimer = setInterval(function() {
-			if (typeof window.Froogaloop !== 'undefined') {
-				clearInterval(checkVimeoAPITimer);
-				that._setup();
-			}
-		}, 100);
-	}
+	this.init = true;
+	this._setup();
 };
 
 VimeoVideo.prototype._setup = function() {
@@ -89,4 +104,19 @@ VimeoVideo.prototype.stop = function() {
 VimeoVideo.prototype.replay = function() {
 	this.player.api('seekTo', 0);
 	this.player.api('play');
+};
+
+VimeoVideo.prototype.on = function(type, callback) {
+	var that = this;
+
+	if (this.init === true) {
+		Video.prototype.on.call(this, type, callback);
+	} else {
+		var timer = setInterval(function() {
+			if (that.init === true) {
+				clearInterval(timer);
+				Video.prototype.on.call(that, type, callback);
+			}
+		}, 100);
+	}
 };
