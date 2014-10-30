@@ -1,13 +1,38 @@
 {
   "name": "video-controller",
-  "description" : "Universal video controller for YouTube, Vimeo, HTML5, Video.js and SublimeVideo.",
-  "version": "1.0.0",
+  "description" : "Offers an interface for controlling some of the popular video players and providers, so that you don't have to deal with the particularities of each video API.",
+  "version": "1.4.0",
   "homepage": "https://github.com/bqworks/video-controller",
-  "author": "bqworks",
+  "author": {
+    "name": "bqworks",
+    "url": "http://bqworks.com/"
+  },
+  "contributors": [{
+    "name": "David Ghiurau",
+    "email": "david.ghiurau@gmail.com"
+  }],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bqworks/video-controller"
+  },
+  "bugs": {
+    "url": "https://github.com/bqworks/video-controller/issues"
+  },
+  "keywords": [
+    "video-controller",
+    "video",
+    "api",
+    "youtube",
+    "vimeo",
+    "video.js",
+    "sublimevideo",
+    "jwplayer"
+  ],
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-uglify": "~0.2.2"
-  }
+  },
+  "license": "MIT"
 }
