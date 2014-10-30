@@ -108,6 +108,8 @@ VideoController.prototype = {
 		this.player.off('play');
 		this.player.off('pause');
 		this.player.off('ended');
+
+		this.$video.removeData('videoController');
 	},
 
 	defaults: {
