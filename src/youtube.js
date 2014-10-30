@@ -91,7 +91,18 @@ YoutubeVideo.prototype._setup = function() {
 };
 
 YoutubeVideo.prototype.play = function() {
-	this.player.playVideo();
+	var that = this;
+
+	if ( this.ready === true ) {
+		this.player.playVideo();
+	} else {
+		var timer = setInterval(function() {
+			if ( that.ready === true ) {
+				clearInterval( timer );
+				that.player.playVideo();
+			}
+		}, 100 );
+	}
 };
 
 YoutubeVideo.prototype.pause = function() {
