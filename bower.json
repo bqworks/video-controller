@@ -16,7 +16,7 @@
     "dist/js/jquery.videoController.js"
   ],
   "ignore": [
-    "examples",
+    "example",
     "libs",
     ".gitignore",
     "bower.json",
