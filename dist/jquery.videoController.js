@@ -11,9 +11,7 @@
 // this information is important because a video can not be
 // controlled programmatically unless the user has started the video manually
 var	userAgent = window.navigator.userAgent.toLowerCase(),
-	isIOS = (userAgent.match(/ipad/i) !== null) ||
-			(userAgent.match(/ipod/i) !== null) ||
-			(userAgent.match(/iphone/i) !== null);
+	isIOS = window.navigator.userAgent.match( /(iPad|iPhone|iPod)/g ) ? true : false;
 
 var VideoController = function(instance, options) {
 	this.$video = $(instance);
