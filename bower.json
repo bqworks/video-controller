@@ -1,0 +1,29 @@
+{
+  "name": "video-controller",
+  "version": "1.4.0",
+  "description": "Offers an interface for controlling some of the popular video players and providers, so that you don't have to deal with the particularities of each video API.",
+  "keywords": [
+    "video-controller",
+    "video",
+    "api",
+    "youtube",
+    "vimeo",
+    "video.js",
+    "sublimevideo",
+    "jwplayer"
+  ],
+  "main": [
+    "dist/js/jquery.videoController.js"
+  ],
+  "ignore": [
+    "examples",
+    "libs",
+    ".gitignore",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json",
+    "README.md",
+    "videoController.jquery.json"
+  ],
+  "license": "MIT"
+}
