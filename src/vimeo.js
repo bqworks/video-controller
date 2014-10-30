@@ -88,7 +88,18 @@ VimeoVideo.prototype._setup = function() {
 };
 
 VimeoVideo.prototype.play = function() {
-	this.player.api('play');
+	var that = this;
+
+	if ( this.ready === true ) {
+		this.player.api( 'play' );
+	} else {
+		var timer = setInterval(function() {
+			if ( that.ready === true ) {
+				clearInterval( timer );
+				that.player.api( 'play' );
+			}
+		}, 100 );
+	}
 };
 
 VimeoVideo.prototype.pause = function() {
